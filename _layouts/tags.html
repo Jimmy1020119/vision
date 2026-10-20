@@ -1,0 +1,5 @@
+---
+layout: default
+---
+<header class="collection-header"><p class="eyebrow">FOLLOW A THREAD</p><h1>Topics & connections.</h1><p>Explore the ideas that connect the writing.</p></header>
+<div class="tag-cloud">{% assign sorted_tags = site.tags | sort %}{% for tag in sorted_tags %}{% assign tag_slug = tag[0] | slugify %}<a href="{{ '/tags/' | append: tag_slug | append: '/' | relative_url }}">{{ tag[0] | escape }}<span>{{ tag[1].size }}</span></a>{% endfor %}</div>

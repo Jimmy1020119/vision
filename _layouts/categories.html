@@ -1,0 +1,5 @@
+---
+layout: default
+---
+<header class="collection-header"><p class="eyebrow">FIND YOUR NEXT IDEA</p><h1>Three ways to explore.</h1><p>From understanding a paper to building something real.</p></header>
+<div class="category-grid">{% for category in site.data.writing_categories %}<a class="category-tile" href="{{ '/categories/' | append: category.slug | append: '/' | relative_url }}"><img src="{{ '/assets/icons/' | append: category.icon | relative_url }}" width="48" height="48" alt=""><span class="tile-count">{{ site.categories[category.name].size }} articles</span><h2>{{ category.name }}</h2><p>{{ category.description }}</p><span class="tile-arrow" aria-hidden="true">↗</span></a>{% endfor %}</div>

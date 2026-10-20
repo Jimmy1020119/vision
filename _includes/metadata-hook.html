@@ -1,0 +1,89 @@
+<!-- Google Slides CSP -->
+<meta http-equiv="Content-Security-Policy"
+  content="frame-src https://docs.google.com https://slides.google.com 'self';">
+
+<!-- Background motion (assets/js/bg-motion.js) -->
+<style>
+  #bg-motion {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    pointer-events: none;
+  }
+  /* 배경이 비쳐 보이도록 푸터는 투명, 사이드바는 반투명 유리 효과 */
+  footer { background-color: transparent !important; }
+  #sidebar {
+    background: color-mix(in srgb, var(--sidebar-bg) 78%, transparent) !important;
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+</style>
+<script src="{{ '/assets/js/bg-motion.js' | relative_url }}" defer></script>
+
+<script>
+(function () {
+  var NS = "jimmy1020119-github-io";
+
+  function fmt(n) {
+    if (n == null || isNaN(n)) return "—";
+    if (n >= 1000000) return (n / 1000000).toFixed(1) + "M";
+    if (n >= 1000)    return (n / 1000).toFixed(1) + "K";
+    return n.toLocaleString();
+  }
+
+  function injectViews() {
+    if (document.getElementById("sp-total-views")) return;
+
+    /* ── 색상: 사이드바 하단 GitHub 아이콘과 동일 색 읽기 ── */
+    var ref = document.querySelector("#sidebar .sidebar-bottom a i, #sidebar .sidebar-bottom a");
+    var iconColor = ref ? window.getComputedStyle(ref).color : "";
+    /* fallback: Chirpy 기본 아이콘 색 (다크 #9a9da0 / 라이트 #6c757d) */
+    if (!iconColor || iconColor === "rgba(0, 0, 0, 0)") {
+      var dark = document.documentElement.getAttribute("data-mode") === "dark" ||
+                 window.matchMedia("(prefers-color-scheme: dark)").matches;
+      iconColor = dark ? "#9a9da0" : "#6c757d";
+    }
+
+    /* ── <ul> 바로 뒤 (nav 안, About 탭 직후) 에 삽입 ── */
+    var ul = document.querySelector("#sidebar nav ul.nav");
+    if (!ul) return;
+
+    /* nav-link 의 실제 padding 읽어서 아이콘 세로선 맞추기 */
+    var refLink = document.querySelector("#sidebar nav .nav-link");
+    var pl = refLink ? window.getComputedStyle(refLink).paddingLeft : "1.5rem";
+    var py = refLink ? window.getComputedStyle(refLink).paddingTop : "0.35rem";
+
+    /* <ul> 안에 <li>로 넣어야 About 바로 아래에 붙음 */
+    var li = document.createElement("li");
+    li.id = "sp-total-views";
+    li.style.cssText = "list-style:none;";
+    li.innerHTML =
+      '<div style="display:flex;align-items:center;gap:6px;' +
+      'padding:' + py + ' 1rem ' + py + ' calc(' + pl + ' + 1.5rem);' +
+      'font-size:0.8rem;color:' + iconColor + ';">' +
+      '<i class="fas fa-eye" aria-hidden="true"></i>' +
+      '<span>Total</span>' +
+      '<span id="sp-views-count" style="font-weight:700">—</span>' +
+      '<span>views</span>' +
+      '</div>';
+
+    ul.appendChild(li);
+
+    fetch("https://api.counterapi.dev/v1/" + NS + "/pageviews/up", { cache: "no-store" })
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        var el = document.getElementById("sp-views-count");
+        if (el) el.textContent = fmt(d && d.count != null ? d.count : null);
+      })
+      .catch(function() {});
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", injectViews);
+  } else {
+    injectViews();
+  }
+})();
+</script>

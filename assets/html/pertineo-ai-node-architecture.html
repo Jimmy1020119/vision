@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pertineo AI Node Architecture</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #ffffff;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: auto;
+  padding: 24px;
+  overflow: hidden;
+}
+
+.canvas {
+  width: 960px;
+  transform-origin: top center;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+.header h1 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: 0.04em;
+}
+.header p {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #1e293b;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* EXAONE badge */
+.exaone-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #ede9ff;
+  border: 1px solid #c4b5fd;
+  border-radius: 999px;
+  padding: 4px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #3b0764;
+  margin-bottom: 10px;
+}
+.exaone-badge .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #7c3aed;
+}
+
+/* Pipeline */
+.pipeline {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+/* IO Capsule */
+.io-capsule {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f8fafc;
+  border: 1.5px solid #94a3b8;
+  border-radius: 999px;
+  padding: 10px 22px;
+}
+.io-capsule .dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #16a34a;
+}
+.io-capsule span {
+  font-size: 13px;
+  color: #0f172a;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.io-capsule.output .dot { background: #6366f1; }
+
+/* Arrow vertical */
+.arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 36px;
+}
+.arrow .line {
+  width: 2px;
+  flex: 1;
+  background: #64748b;
+}
+.arrow .tip {
+  width: 0; height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 8px solid #64748b;
+}
+
+/* Row */
+.row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+.row-spacer { flex: 1; }
+
+/* Node card */
+.node {
+  flex: 0 0 auto;
+  width: 330px;
+  border-radius: 14px;
+  padding: 18px 22px;
+}
+.node-schemer  { background: #eff8ff; border: 1.5px solid #3b82f6; }
+.node-planner  { background: #f5f3ff; border: 1.5px solid #8b5cf6; }
+.node-tool     { background: #f0fdf4; border: 1.5px solid #22c55e; }
+.node-analyzer { background: #fff7ed; border: 1.5px solid #f97316; }
+
+.node-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.node-icon {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.icon-schemer  { background: #bfdbfe; }
+.icon-planner  { background: #ddd6fe; }
+.icon-tool     { background: #bbf7d0; }
+.icon-analyzer { background: #fed7aa; }
+
+.node-name {
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+.name-schemer  { color: #1d4ed8; }
+.name-planner  { color: #5b21b6; }
+.name-tool     { color: #15803d; }
+.name-analyzer { color: #c2410c; }
+
+.node-desc {
+  font-size: 12.5px;
+  color: #1e293b;
+  margin-bottom: 10px;
+  line-height: 1.55;
+}
+
+.node-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.tag {
+  font-size: 11px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+.tag-model { background: #e2e8f0; color: #0f172a; border: 1px solid #94a3b8; }
+.tag-out   { background: #dcfce7; color: #14532d; border: 1px solid #4ade80; }
+
+/* Horizontal connector */
+.h-connector {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+.h-line {
+  flex: 1;
+  height: 2px;
+  background: #64748b;
+}
+.h-tip {
+  width: 0; height: 0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 7px solid #64748b;
+}
+
+/* Evaluator box */
+.evaluator-box {
+  flex: 0 0 auto;
+  width: 210px;
+  background: #fff5f5;
+  border: 1.5px solid #f87171;
+  border-radius: 12px;
+  padding: 14px 16px;
+  position: relative;
+}
+.evaluator-title {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: #b91c1c;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.evaluator-title::before {
+  content: '';
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #b91c1c;
+}
+.eval-item {
+  font-size: 11.5px;
+  color: #1e293b;
+  padding: 3px 0;
+  border-bottom: 1px solid #fecaca;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 500;
+}
+.eval-item:last-child { border-bottom: none; }
+.eval-item::before { content: '›'; color: #b91c1c; font-weight: 800; font-size: 14px; }
+.retry-label {
+  display: block;
+  margin-top: 7px;
+  font-size: 10.5px;
+  color: #b91c1c;
+  font-weight: 600;
+}
+
+/* Sub agents (Tool Node) */
+.tool-parallel {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+.sub-agent {
+  flex: 1;
+  background: #dcfce7;
+  border: 1px solid #4ade80;
+  border-radius: 8px;
+  padding: 9px 11px;
+}
+.sub-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #14532d;
+  margin-bottom: 3px;
+}
+.sub-desc {
+  font-size: 10.5px;
+  color: #166534;
+  line-height: 1.4;
+}
+
+/* State flow section */
+.state-section {
+  margin-top: 48px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 16px;
+  padding: 24px 28px;
+}
+.state-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #334155;
+  margin-bottom: 16px;
+}
+.state-flow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.state-chip {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 8px 13px;
+  font-size: 11.5px;
+  color: #1e293b;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  line-height: 1.5;
+}
+.state-chip strong {
+  font-weight: 700;
+  display: block;
+  margin-bottom: 1px;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+.state-chip.s { border: 1.5px solid #3b82f6; }
+.state-chip.s strong { color: #1d4ed8; }
+.state-chip.p { border: 1.5px solid #8b5cf6; }
+.state-chip.p strong { color: #5b21b6; }
+.state-chip.t { border: 1.5px solid #22c55e; }
+.state-chip.t strong { color: #15803d; }
+.state-chip.a { border: 1.5px solid #f97316; }
+.state-chip.a strong { color: #c2410c; }
+.state-chip.e { border: 1.5px solid #f87171; }
+.state-chip.e strong { color: #b91c1c; }
+
+.state-arrow {
+  width: 22px;
+  height: 2px;
+  background: #64748b;
+  position: relative;
+  flex-shrink: 0;
+}
+.state-arrow::after {
+  content: '';
+  position: absolute;
+  right: -1px; top: -4px;
+  width: 0; height: 0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 7px solid #64748b;
+}
+
+/* Legend */
+.legend {
+  margin-top: 18px;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: #1e293b;
+  font-weight: 500;
+}
+.legend-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+</style>
+</head>
+<body>
+<div class="canvas">
+
+  <!-- Header -->
+  <div class="header">
+    <div style="text-align:center;margin-bottom:10px">
+      <span class="exaone-badge"><span class="dot"></span> LG AI Research EXAONE 100% — Korean AI Track</span>
+    </div>
+    <h1>Pertineo — AI Node Architecture</h1>
+    <p>LangGraph · Sequential Pipeline with Evaluator Gates</p>
+  </div>
+
+  <div class="pipeline">
+
+    <!-- INPUT -->
+    <div class="io-capsule">
+      <div class="dot"></div>
+      <span>INPUT &nbsp;|&nbsp; Resume Text + Q&amp;A</span>
+    </div>
+
+    <div class="arrow"><div class="line"></div><div class="tip"></div></div>
+
+    <!-- SCHEMER ROW -->
+    <div class="row">
+      <div class="row-spacer"></div>
+      <div class="node node-schemer">
+        <div class="node-label">
+          <div class="node-icon icon-schemer">🔍</div>
+          <div class="node-name name-schemer">Schemer</div>
+        </div>
+        <div class="node-desc">Resume validation + structured data extraction<br>(parsing role, company, period, title)</div>
+        <div class="node-tags">
+          <span class="tag tag-model">EXAONE 3.5</span>
+          <span class="tag tag-out">→ current_criteria</span>
+        </div>
+      </div>
+      <div class="h-connector">
+        <div class="h-line"></div>
+        <div class="h-tip"></div>
+      </div>
+      <div class="evaluator-box">
+        <div class="evaluator-title">Evaluator</div>
+        <div class="eval-item">Field completeness check</div>
+        <div class="eval-item">Date format normalization</div>
+        <div class="eval-item">Valid-resume detection</div>
+        <span class="retry-label">↩ Auto retry on failure</span>
+      </div>
+      <div class="row-spacer"></div>
+    </div>
+
+    <div class="arrow"><div class="line"></div><div class="tip"></div></div>
+
+    <!-- PLANNER ROW -->
+    <div class="row">
+      <div class="row-spacer"></div>
+      <div class="node node-planner">
+        <div class="node-label">
+          <div class="node-icon icon-planner">🗺️</div>
+          <div class="node-name name-planner">Planner</div>
+        </div>
+        <div class="node-desc">Generates 2–3 web-search queries<br>(prioritized search strategy)</div>
+        <div class="node-tags">
+          <span class="tag tag-model">EXAONE 3.5</span>
+          <span class="tag tag-out">→ action_plan</span>
+        </div>
+      </div>
+      <div class="h-connector">
+        <div class="h-line"></div>
+        <div class="h-tip"></div>
+      </div>
+      <div class="evaluator-box">
+        <div class="evaluator-title">Evaluator</div>
+        <div class="eval-item">Plan structure validation</div>
+        <div class="eval-item">Query format check</div>
+        <span class="retry-label">↩ Auto retry on failure</span>
+      </div>
+      <div class="row-spacer"></div>
+    </div>
+
+    <div class="arrow"><div class="line"></div><div class="tip"></div></div>
+
+    <!-- TOOL NODE ROW -->
+    <div class="row">
+      <div class="row-spacer"></div>
+      <div class="node node-tool">
+        <div class="node-label">
+          <div class="node-icon icon-tool">⚙️</div>
+          <div class="node-name name-tool">Tool Node</div>
+        </div>
+        <div class="node-desc">External info gathering — two agents run <strong style="color:#15803d">in parallel</strong></div>
+        <div class="tool-parallel">
+          <div class="sub-agent">
+            <div class="sub-title">🌐 Tavily Agent</div>
+            <div class="sub-desc">Web search (ReAct)<br>company & hiring trends</div>
+          </div>
+          <div class="sub-agent">
+            <div class="sub-title">🗄️ ES Agent</div>
+            <div class="sub-desc">ElasticSearch query<br>accepted-resume stats</div>
+          </div>
+        </div>
+        <div class="node-tags" style="margin-top:10px">
+          <span class="tag tag-model">asyncio.gather()</span>
+          <span class="tag tag-out">→ tool_results</span>
+        </div>
+      </div>
+      <div class="h-connector">
+        <div class="h-line"></div>
+        <div class="h-tip"></div>
+      </div>
+      <div class="evaluator-box">
+        <div class="evaluator-title">Evaluator</div>
+        <div class="eval-item">Search-result presence</div>
+        <div class="eval-item">Statistics data validation</div>
+        <span class="retry-label">↩ Auto retry on failure</span>
+      </div>
+      <div class="row-spacer"></div>
+    </div>
+
+    <div class="arrow"><div class="line"></div><div class="tip"></div></div>
+
+    <!-- ANALYZER ROW -->
+    <div class="row">
+      <div class="row-spacer"></div>
+      <div class="node node-analyzer">
+        <div class="node-label">
+          <div class="node-icon icon-analyzer">✨</div>
+          <div class="node-name name-analyzer">Analyzer</div>
+        </div>
+        <div class="node-desc">Generates the 3D evaluation report (streaming)<br>X (Learning) · Y (Job Fit) · Z (Execution)</div>
+        <div class="node-tags">
+          <span class="tag tag-model">EXAONE Deep</span>
+          <span class="tag tag-out">→ analysis_report</span>
+        </div>
+      </div>
+      <div class="h-connector">
+        <div class="h-line"></div>
+        <div class="h-tip"></div>
+      </div>
+      <div class="evaluator-box">
+        <div class="evaluator-title">Evaluator</div>
+        <div class="eval-item">Required-section check</div>
+        <div class="eval-item">x/y/z score extraction</div>
+        <div class="eval-item">Pass-probability range check</div>
+        <span class="retry-label">↩ Auto retry on failure</span>
+      </div>
+      <div class="row-spacer"></div>
+    </div>
+
+    <div class="arrow"><div class="line"></div><div class="tip"></div></div>
+
+    <!-- OUTPUT -->
+    <div class="io-capsule output">
+      <div class="dot"></div>
+      <span>OUTPUT &nbsp;|&nbsp; 3D Report + Scores + Improvement Plan + Pass Probability</span>
+    </div>
+
+  </div>
+
+  <!-- State Flow -->
+  <div class="state-section">
+    <div class="state-title">Shared State (AnalysisState) — How Nodes Communicate</div>
+    <div class="state-flow">
+      <div class="state-chip s"><strong>SCHEMER</strong>current_criteria<br>extraction_attempts</div>
+      <div class="state-arrow"></div>
+      <div class="state-chip p"><strong>PLANNER</strong>action_plan<br>tool_types</div>
+      <div class="state-arrow"></div>
+      <div class="state-chip t"><strong>TOOL</strong>tool_results<br>prev_resume_stats</div>
+      <div class="state-arrow"></div>
+      <div class="state-chip a"><strong>ANALYZER</strong>analysis_report<br>x/y/z_axis scores</div>
+      <div class="state-arrow"></div>
+      <div class="state-chip e"><strong>EVALUATOR</strong>needs_retry<br>retry_target</div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#b91c1c"></div>Evaluator acts as a quality gate after each node</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#15803d"></div>Only the Tool Node runs in parallel via asyncio.gather()</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#6366f1"></div>Whole flow orchestrated by a LangGraph StateGraph</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  /* Auto-scale the 960px canvas to the iframe width and report height to parent */
+  function fit() {
+    var c = document.querySelector('.canvas');
+    var avail = document.body.clientWidth - 48;
+    var scale = Math.min(1, avail / 960);
+    c.style.transform = 'scale(' + scale + ')';
+    var h = c.getBoundingClientRect().height + 48;
+    if (window.frameElement) window.frameElement.style.height = h + 'px';
+  }
+  window.addEventListener('resize', fit);
+  window.addEventListener('load', fit);
+  fit();
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+---
+layout: default
+---
+{% assign tagged_posts = site.tags[page.title] %}
+<header class="collection-header"><a class="back-link" href="{{ '/tags/' | relative_url }}">← All topics</a><p class="eyebrow">CONNECTED BY AN IDEA</p><h1>{{ page.title | escape }}</h1><p>{{ tagged_posts.size }} articles</p></header>
+{% include writing-list.html posts=tagged_posts %}

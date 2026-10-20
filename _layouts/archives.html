@@ -1,0 +1,6 @@
+---
+layout: default
+---
+<header class="collection-header"><p class="eyebrow">THE NOTEBOOK</p><h1>Ideas, in progress.</h1><p>Projects, papers, and lessons from building.</p></header>
+<nav class="collection-filters" aria-label="Writing categories"><a href="{{ '/archives/' | relative_url }}" aria-current="page">All <span>{{ site.posts.size }}</span></a>{% for category in site.data.writing_categories %}<a href="{{ '/categories/' | append: category.slug | append: '/' | relative_url }}">{{ category.name }}</a>{% endfor %}</nav>
+{% include writing-list.html posts=site.posts %}

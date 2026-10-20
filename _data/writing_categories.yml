@@ -1,0 +1,15 @@
+- name: Projects
+  slug: projects
+  description: From ideas to working systems
+  icon: cube-transparent-light.svg
+  position: primary
+- name: Paper Notes
+  slug: paper-notes
+  description: Read · Summarize · Think
+  icon: book-open-light.svg
+  position: secondary
+- name: Startup
+  slug: startup
+  description: Building products and ventures
+  icon: rocket-launch-light.svg
+  position: tertiary

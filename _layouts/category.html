@@ -1,0 +1,7 @@
+---
+layout: default
+---
+{% assign category_posts = site.categories[page.title] %}
+<header class="collection-header"><a class="back-link" href="{{ '/blog/' | relative_url }}">← All writing</a><p class="eyebrow">EXPLORE A CATEGORY</p><h1>{{ page.title | escape }}</h1>{% for category in site.data.writing_categories %}{% if category.name == page.title %}<p>{{ category.description }}</p>{% endif %}{% endfor %}</header>
+<nav class="collection-filters" aria-label="Writing categories"><a href="{{ '/blog/' | relative_url }}">All</a>{% for category in site.data.writing_categories %}<a href="{{ '/categories/' | append: category.slug | append: '/' | relative_url }}" {% if category.name == page.title %}aria-current="page"{% endif %}>{{ category.name }}</a>{% endfor %}</nav>
+{% include writing-list.html posts=category_posts %}

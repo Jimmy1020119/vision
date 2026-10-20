@@ -1,0 +1,5 @@
+<div class="writing-list">
+{% for post in include.posts %}
+<article class="writing-row"><div class="list-meta"><span>{{ post.categories | first | escape }}</span><time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: '%Y-%m-%d' }}</time></div><a class="writing-entry" href="{{ post.url | relative_url }}"><div><h2>{{ post.title | escape }}</h2><p>{{ post.description | default: post.excerpt | strip_html | truncate: 185 | escape }}</p></div><span class="entry-arrow" aria-hidden="true">↗</span></a></article>
+{% else %}<p class="empty-writing">No writing here yet. New ideas are on the way.</p>{% endfor %}
+</div>

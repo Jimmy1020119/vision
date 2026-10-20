@@ -1,0 +1,27 @@
+---
+layout: default
+---
+<section class="blog-index writing" id="research" aria-labelledby="blog-title" tabindex="-1">
+  <header class="collection-header"><p class="eyebrow">THE NOTEBOOK</p><h1 id="blog-title">Ideas, in progress.</h1><p>Projects, paper notes, and lessons from building.</p></header>
+  <div class="writing-tools" hidden>
+    <div class="filters" role="group" aria-label="Filter writing by topic"><button type="button" data-filter="all" data-filter-slug="all" aria-pressed="true">All</button>{% for category in site.data.writing_categories %}<button type="button" data-filter="{{ category.name | escape }}" data-filter-slug="{{ category.slug }}" aria-pressed="false">{{ category.name }}</button>{% endfor %}</div>
+    <label class="search"><span class="sr-only">Search writing</span><input type="search" placeholder="Search writing…" aria-controls="post-list"></label>
+  </div>
+  <p class="sr-only" id="results-status" role="status" aria-live="polite"></p>
+  <div class="blog-grid" id="post-list">
+    {% for post in site.posts %}
+    {% assign cover = post.thumbnail | default: post.image.path | default: post.image %}
+    <article class="post-row blog-card" data-categories="{{ post.categories | join: '|' | escape }}">
+      <a class="blog-card-link" href="{{ post.url | relative_url }}">
+        <div class="blog-cover">
+          {% if cover %}<img src="{{ cover | relative_url }}" width="960" height="540" alt="{{ post.thumbnail_alt | default: post.title | escape }}" loading="lazy">{% else %}<div class="cover-title"><span>{{ post.categories | first | escape }}</span><strong>{{ post.title | escape }}</strong><span>JIMMY / THE NOTEBOOK</span></div>{% endif %}
+          <span class="cover-arrow" aria-hidden="true">↗</span>
+        </div>
+        <div class="blog-card-content"><div class="blog-card-meta"><span>{{ post.categories | first | escape }}</span><time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: '%Y-%m-%d' }}</time></div><h2>{{ post.title | escape }}</h2><p>{{ post.description | default: post.excerpt | strip_html | truncate: 150 | escape }}</p><span class="read-article">Read article <span aria-hidden="true">↗</span></span></div>
+      </a>
+    </article>
+    {% endfor %}
+  </div>
+  <p class="empty-state" hidden>No notes found. Try another topic or search.</p>
+</section>
+<script src="{{ '/assets/js/landing.js' | relative_url }}" defer></script>

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="{{ site.lang | default: 'en' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a0e10">
+  {% seo %}
+  <link rel="alternate" type="application/atom+xml" title="{{ site.title | escape }}" href="{{ '/feed.xml' | relative_url }}">
+  <link rel="preload" as="font" href="{{ '/assets/fonts/inter-latin.woff2' | relative_url }}" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="{{ '/assets/css/landing.css' | relative_url }}">
+  <script src="{{ '/assets/js/landing.js' | relative_url }}" defer></script>
+  <script type="module" src="{{ '/assets/js/robot-interaction.js' | relative_url }}"></script>
+</head>
+<body>
+<a class="skip-link" href="#research">Skip to writing</a>
+<main>
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="robot-scene" aria-hidden="true">
+      <img class="robot-fallback" src="{{ '/assets/img/robot-hero.webp' | relative_url }}" width="2048" height="1478" alt="" fetchpriority="high">
+      <img class="robot-body" src="{{ '/assets/img/robot-body.webp' | relative_url }}" width="2048" height="1478" alt="">
+      <div class="robot-arm">
+        <img class="arm-open" src="{{ '/assets/img/robot-arm-open.webp' | relative_url }}" width="2048" height="1478" alt="">
+        <canvas class="arm-mesh"></canvas>
+      </div>
+    </div>
+    <p class="sr-only" id="pickup-status" role="status" aria-live="polite"></p>
+    <header class="site-header">
+      <a class="wordmark" href="{{ '/' | relative_url }}" aria-label="Jimmy home">Jimmy</a>
+      <nav aria-label="Main navigation"><a href="{{ '/blog/' | relative_url }}">Blog</a><a href="https://www.linkedin.com/in/jang-young-choi/" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a><a href="{{ '/contact/' | relative_url }}">Contact</a></nav>
+    </header>
+    <div class="hero-copy"><p class="eyebrow">JIMMY / AI RESEARCHER</p><h1 id="hero-title">Vision to<br>Intelligence.</h1></div>
+    <nav class="floating-cards" aria-label="Explore my work">
+      {% for category in site.data.writing_categories %}
+      <a class="glass-card card-{{ category.position }}" href="{{ '/categories/' | append: category.slug | append: '/' | relative_url }}" data-writing-category="{{ category.name | escape }}">
+        <img class="card-icon" src="{{ '/assets/icons/' | append: category.icon | relative_url }}" width="72" height="72" alt="">
+        <span class="card-copy"><span class="card-title">{{ category.name }}</span><span class="card-description">{{ category.description }}</span></span>
+        <img class="card-arrow" src="{{ '/assets/icons/arrow-right-light.svg' | relative_url }}" width="32" height="32" alt="">
+      </a>
+      {% endfor %}
+    </nav>
+    <p class="pick-hint" aria-hidden="true"><img src="{{ '/assets/icons/arrow-bend-down-left-light.svg' | relative_url }}" width="76" height="54" alt=""><span>Pick something<br>to explore</span></p>
+    <a class="explore-link" href="#research"><span>Explore my work</span><img src="{{ '/assets/icons/arrow-down-light.svg' | relative_url }}" width="26" height="26" alt=""></a>
+    <div class="selected-work" aria-label="Selected work">
+      <p>Selected work</p>
+      <a href="{{ '/posts/fade-project/' | relative_url }}"><span>FADE</span><small>Foreground Attention Decoupling</small></a>
+      <a href="{{ '/posts/pertineo-startup/' | relative_url }}"><span>Pertineo</span><small>A 3D AI Talent Evaluation Platform</small></a>
+    </div>
+  </section>
+  <section class="writing" id="research" aria-labelledby="writing-title" tabindex="-1">
+    <div class="section-heading"><div><p class="eyebrow">PROJECTS, PAPERS & STARTUP NOTES</p><h2 id="writing-title">Ideas, in progress.</h2></div><a class="archive-link" href="{{ '/blog/' | relative_url }}">View blog<img src="{{ '/assets/icons/arrow-up-right-light.svg' | relative_url }}" width="22" height="22" alt=""></a></div>
+    <div class="writing-tools" hidden>
+      <div class="filters" role="group" aria-label="Filter writing by topic">
+        <button type="button" data-filter="all" data-filter-slug="all" aria-pressed="true">All</button>
+        {% for category in site.data.writing_categories %}
+        <button type="button" data-filter="{{ category.name | escape }}" data-filter-slug="{{ category.slug }}" aria-pressed="false">{{ category.name }}</button>
+        {% endfor %}
+      </div>
+      <label class="search"><span class="sr-only">Search writing</span><input type="search" placeholder="Search writing…" aria-controls="post-list"></label>
+    </div>
+    <p class="sr-only" id="results-status" role="status" aria-live="polite"></p>
+    <div class="post-list" id="post-list">
+    {% for post in site.posts %}
+      <article class="post-row" data-categories="{{ post.categories | join: '|' | escape }}">
+        <div class="post-meta"><span>{{ post.categories | first | escape }}</span><time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: '%Y-%m-%d' }}</time></div>
+        <a href="{{ post.url | relative_url }}"><h3>{{ post.title | escape }}</h3><p>{{ post.description | default: post.excerpt | strip_html | truncate: 190 | escape }}</p><img class="post-arrow" src="{{ '/assets/icons/arrow-up-right-light.svg' | relative_url }}" width="28" height="28" alt=""></a>
+      </article>
+    {% endfor %}
+    </div>
+    <p class="empty-state" hidden>No notes found. Try another topic or search.</p>
+  </section>
+</main>
+<footer class="site-footer"><a class="wordmark" href="{{ '/' | relative_url }}">Jimmy</a><p>AI Researcher · Seoul & San Francisco</p><nav aria-label="Social links"><a href="https://github.com/{{ site.github.username }}">GitHub</a><a href="https://www.linkedin.com/in/jang-young-choi/">LinkedIn</a><a href="{{ '/feed.xml' | relative_url }}">RSS</a><a href="{{ '/contact/' | relative_url }}">Get in touch</a></nav></footer>
+</body>
+</html>

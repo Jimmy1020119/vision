@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a0e10">
+  {% seo %}
+  <link rel="alternate" type="application/atom+xml" title="{{ site.title | escape }}" href="{{ '/feed.xml' | relative_url }}">
+  <link rel="preload" as="font" href="{{ '/assets/fonts/inter-latin.woff2' | relative_url }}" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="{{ '/assets/css/reading.css' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/css/blog.css' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/vendor/katex/katex.min.css' | relative_url }}">
+  <script src="{{ '/assets/vendor/katex/katex.min.js' | relative_url }}" defer></script>
+  <script src="{{ '/assets/vendor/katex/auto-render.min.js' | relative_url }}" defer></script>
+  <script src="{{ '/assets/js/reading.js' | relative_url }}" defer></script>
+</head>
+<body class="reading-site">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="reading-header">
+    <a class="wordmark" href="{{ '/' | relative_url }}" aria-label="Jimmy home">Jimmy<span class="brand-dot" aria-hidden="true"></span></a>
+    <nav aria-label="Main navigation">
+      <a href="{{ '/blog/' | relative_url }}" {% if page.url == '/blog/' or page.url == '/archives/' %}aria-current="page"{% endif %}>Blog</a>
+      <a href="https://www.linkedin.com/in/jang-young-choi/" target="_blank" rel="noopener noreferrer">LinkedIn <span aria-hidden="true">↗</span></a>
+      <a href="{{ '/contact/' | relative_url }}" {% if page.url == '/contact/' %}aria-current="page"{% endif %}>Contact</a>
+    </nav>
+  </header>
+  <main id="main" class="reading-main" tabindex="-1">{{ content }}</main>
+  <footer class="reading-footer"><a class="wordmark" href="{{ '/' | relative_url }}">Jimmy</a><p>Vision to Intelligence.</p><nav aria-label="Footer navigation"><a href="{{ '/tags/' | relative_url }}">Tags</a><a href="{{ '/feed.xml' | relative_url }}">RSS</a><a href="https://github.com/{{ site.github.username }}">GitHub ↗</a></nav></footer>
+</body>
+</html>
